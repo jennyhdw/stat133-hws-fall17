@@ -1,0 +1,50 @@
+---
+title: "up02-Jenny-Huang"
+author: "Jenny Huang"
+date: "9/9/2017"
+output: github_document
+---
+
+```{r}
+
+load("nba2017-salary-points.RData")
+ls()
+```
+
+```{r}
+# quantitative variable
+summary(salary)
+summary(experience)
+summary(points)
+summary(points1)
+summary(points2)
+summary(points3)
+```
+
+```{r}
+mean(salary)
+sd(salary)
+max(salary)
+min(salary)
+median(salary)
+quantile(salary)
+hist(salary)
+boxplot(salary)
+plot(density(salary))
+```
+
+
+```{r}
+is.factor(position)
+position_fac <- factor(position)
+table(position_fac)
+prop.table(table(position_fac))
+```
+There is a pretty even distribution across all the positions.
+```{r}
+barplot(prop.table(table(position_fac)))
+```
+
+## Reflections
+
+I feel like this assignment is easier than the last one in the sense that it is much more intuitive/mathematical. I think the hard part is the difference between vector and factor, and really understand why we are using them.
