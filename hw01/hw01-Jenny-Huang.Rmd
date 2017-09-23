@@ -1,0 +1,153 @@
+---
+title: "hw01-Jenny-Huang"
+author: "Jenny Huang"
+date: "9/15/2017"
+output: github_document
+---
+```{r, echo = FALSE}
+# disable the formatting of numbers.
+knitr::knit_hooks$set(inline = as.character)
+```
+
+```{r}
+#load data file
+load("data/nba2017-salary-points.RData")
+#list the available objects
+ls()
+```
+
+# Research Question  
+
+## 1) A bit of data preporocessing
+
+```{r}
+#measure salary in millions
+salary_m <- round(salary/1000000, digits = 2)
+paste("$", format(salary_m)) 
+
+#creating experience as an integer vector
+experience_int <- as.integer(replace(experience,grep("R",experience),"0"))
+
+#creating position factor
+position_fac <- factor(position)
+levels(position_fac) <- list("center" = "C", "small_fwd" = "SF", "power_fwd" = "PF", "shoot_guard" = "SG", "point_guard" = "PG")
+
+#frequencies for positions
+table(position_fac)
+```
+
+## 2) Scatterplot of Points and Salary
+```{r}
+plot(points,salary_m, pch = 21,cex = 1.5, col = 'orange', xlab = 'Points', ylab = 'Salary (in millions)',main = "Scatterplot of Points and Salary")
+```
+
+## 3) Correlation between Points and Salary
+```{r}
+# finding correlation between points and salary
+n <- length(player)
+points_mean <- sum(points)/n
+salary_mean <- sum(salary_m)/n
+points_var <- sum((points-points_mean)^2)/(n-1)
+salary_var <- sum((salary_m - salary_mean)^2)/(n-1)
+points_sd <- points_var^(1/2)
+salary_sd <- salary_var^(1/2)
+cov_ps <- sum((points - points_mean)*(salary_m - salary_mean))/(n -1)
+cor_ps <- cov_ps/(points_sd*salary_sd)
+```
+
+## 4) Simple Linear Regression
+```{r}
+b1 <- cor_ps * salary_sd / points_sd
+b0 <- salary_mean - b1 * points_mean
+y_hat <- b0 + b1 * points
+summary(y_hat)
+```
+
+#### Regression equation:
+ $\hat{y}$= `r round(b0, digits = 2)` + `r round(b1, digits = 2) ` * points
+
+#### Interpretation for slope coefficient b1:\
+For every extra point the player scores, his salary increases by 0.008558 million dollars.\
+
+####Interpretation for intercept b0:\
+When the player doesn't score at all, his salary is 1.5091 million dollars.
+
+#### Predicted salaries:  
+
+- 0 points:   `r round(b0, digits = 2) ` million dollars
+- 100 points:  `r round(b0, digits = 2) + round(b1, digits = 2)* 100 ` million dollars
+- 500 points: `r round(b0, digits = 2) + round(b1, digits = 2)* 500 ` million dollars
+- 1000 points: `r round(b0, digits = 2) + round(b1, digits = 2)* 1000 ` million dollars
+- 2000 points: `r round(b0, digits = 2) + round(b1, digits = 2)* 2000 ` million dollars
+
+
+## 5) Plotting the regression line
+
+```{r}
+plot(points,salary_m, pch = 19, col = "grey", xlab = "Points", ylab = "Salary(in millions", main = "Regression and Lowess lines")
+
+# adding regression line
+abline(a = b0, b = b1, col = "blue", lwd = 3)
+text(x = 2500, y = 25, label = "Regression", col = "blue")
+
+# adding lowess line
+lines(lowess(points,salary_m, f = 0.7), col = "red", lwd = 3)
+text(x = 1500, y = 20, label = "Lowess", col = "red")
+```
+
+## 6) Regression residuals and Coefficient of Determination
+
+```{r}
+residuals <- salary_m - y_hat
+summary(residuals)
+RSS <- sum(residuals^2)
+TSS <- sum((salary_m - salary_mean)^2)
+R_square <- 1 - RSS/TSS
+```
+RSS = `r round(RSS, digits = 2) `\
+TSS = `r round(TSS, digits = 2)`\
+R^2 = `r round(R_square, digits = 2)`
+
+## 7) Exploring Position and Experience
+
+```{r}
+plot(experience_int, salary_m, pch = 21, cex = 0.8, col = 'black',bg = "grey", xlab = 'Years of Experience', ylab = 'Salary (in millions)',main = "Scatterplot with lowess smooth")
+lines(lowess(experience_int,salary_m, f = 0.7), col = "red", lwd = 3)
+```
+
+#### 3D Scatterplot
+```{r}
+library(scatterplot3d)
+scatterplot3d(points, experience_int, salary_m, ylab = "Experience", zlab = "Salary (in millions)", cex.symbols = 1.5, pch = 20, main = "3D Scatterplot", color = "orange")
+```
+
+#### Boxplot
+```{r}
+boxplot(salary_m ~ position_fac, xlab = "Position", ylab = "Salary(in millions)")
+```
+
+#### Descriptions for plots
+> The scatterplot describes the relation between experience and salary. The 3D graph describes the correlations among salary, points, and experience. The boxplot divides position into 5 different categories and draws the relation between salary and each position. 
+
+#### Relation between experience and salary
+> It does not seem like there is much of a correlation between years of experience and salary, because the range of salaries corresponds to each year of experience is relatively similar. Although there are more players who are paid better with longer experience, it is not strong enough to conclude the correlation between salary and experience.
+
+#### Boxplot and position and salary
+
+> It doesn't look like position is related with salary. ALl positions have around the same average salary. There are more outliers for the four positions other than center, and center has the widest range of salary.
+
+
+
+
+## 8) Comments and Reflections
+
+  + Differentiate between factor and vector is still a little difficult because they are all very abstract and sometimes it's hard to visualize.
+  + Plotting is relatively easy.
+  + It is hard to memorize the git commands.
+  + GitHub is easy to navigate, and I like that we can keep all our works saved online.
+  + Yes, I need my friends to debug some of my codes, because a lot of times my logics were right but the syntax was wrong.
+  + Around 4 hours.
+  + The first part of changing position into factors and changing the names of the levels.
+  + Not really. I feel like I learned a lot through this project.
+  + Not being able to plot the 3d graph at first.
+  + It was cool to visualize all the data through graphs.
