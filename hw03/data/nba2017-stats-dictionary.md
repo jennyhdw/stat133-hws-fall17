@@ -1,0 +1,24 @@
+## Data `nba2017-stats.csv`
+
+- `player`: first and last names of player
+- `games_played`: Games Played furing regular season
+- `minutes`: Minutes Played during regular season
+- `field_goals_made`: Field Goals Made
+- `field_goals_atts`: Field Goal Attempts
+- `field_goals_perc`: Percentage of field goals made
+- `points3_made`: 3-Point Field Goals Made
+- `points3_atts`: 3-Point Field Goal Attempts
+- `points3_perc`: Percentage of 3-Point Field Goals made
+- `points2_made`: 2-Point Field Goal Made
+- `points2_atts`: 2-Point Field Goal Attempts
+- `points2_perc`: Percentage of 2-Point Field Goals Made 
+- `points1_made`: 1-Point Field Goal Made
+- `points1_atts`: 1-Point Field Goal Attempts
+- `points1_perc`: Percentage of 1-Point Field Goals Made
+- `off_rebounds`: Offensive Rebounds
+- `def-rebounds`: Defensive Rebounds
+- `assists`: Assists
+- `steals`: Steals
+- `blocks`: Blocks
+- `turnovers`: Turnovers
+- `fouls`: Fouls

@@ -1,0 +1,72 @@
+---
+title: "hw03-Jenny-Huang"
+author: "Jenny Huang"
+date: "10/9/2017"
+output: github_document
+---
+```{r}
+setwd("~/Desktop/stat133/stat133-hws-fall17/hw03")
+library(readr)
+library(dplyr)
+library(ggplot2)
+teams <- read.csv("data/nba2017-teams.csv")
+```
+
+
+```{r}
+#ggplot of ranking teams in salary
+
+ggplot(teams, aes(x = reorder(team,salary), y = teams$salary)) +
+  geom_bar(colour = "white", fill = "grey", stat = 'identity') + coord_flip() +
+  xlab("Team") + ylab("Salary(in millions)") + ggtitle("NBA Teams ranked by Total Salary") + geom_hline(yintercept = mean(teams$salary), colour = "red", size = 1.4, alpha = 0.4)
+```
+
+```{r}
+#ggplot of ranking teams in total points
+
+ggplot(teams, aes(x = reorder(team,points), y = teams$points)) +
+  geom_bar(colour = "white", fill = "grey", stat = 'identity') + coord_flip() +
+  xlab("Team") + ylab("Total Points") + ggtitle("NBA Teams ranked by Total Points") + geom_hline(yintercept = mean(teams$points), colour = "red", size = 1.4, alpha = 0.4)
+```
+
+```{r}
+#ggplot of ranking teams in total efficiency
+
+ggplot(teams, aes(x = reorder(team,efficiency), y = teams$efficiency)) +
+  geom_bar(colour = "white", fill = "grey", stat = 'identity') + coord_flip() +
+  xlab("Team") + ylab("Total Efficiency") + ggtitle("NBA Teams ranked by Total Efficiency") + geom_hline(yintercept = mean(teams$efficiency), colour = "red", size = 1.4, alpha = 0.4)
+```
+
+
+The obtained rankings show that Cleveland Cavaliers has the highest salary and efficiency in general, while Golden State Warriors scores the most points and has the second highest efficiency. While more than half of teams score higher than the average,only 12 teams have the total salary higher than the average, and only 9 teams have total efficiency higher than the average. 
+
+```{r}
+# PCA
+teams_pca <- select(teams, c("points3","points2","free_throws","off_rebounds",
+                             "def_rebounds", "assists","steals","blocks",
+                             "turnovers","fouls"))
+pca <- prcomp(teams_pca, scale. = TRUE)
+eigs <- data.frame(
+  eigenvalue = round(pca$sdev^2,4),
+  prop = round(pca$sdev^2 / sum(pca$sdev^2),4),
+  cumprop = round(cumsum(pca$sdev^2 / sum(pca$sdev^2)),4)
+)
+eigs
+```
+
+```{r}
+pca.plot <- as.data.frame(pca$x)
+pca.plot <- cbind(pca.plot, teams$team)
+ggplot(data = pca.plot ,aes(PC1, PC2)) + geom_text(aes(label = pca.plot$team)) + ggtitle ("PCA plot ( PC1 AND PC2)")
+```
+
+## Index based on PC1
+```{r}
+pca.plot$s1 <- 100 * ((pca.plot$PC1) - min(pca.plot$PC1))/(max(pca.plot$PC1) - min(pca.plot$PC1))
+
+ggplot(pca.plot, aes(x = reorder(pca.plot$team,s1), y = pca.plot$s1)) +
+  geom_bar(colour = "white", fill = "grey", stat = 'identity') + coord_flip() +
+  xlab("Team") + ylab("First PC(scaled from 0 to 100)") + ggtitle("NBA Teams ranked by scaled PC1") 
+```
+
+Golden State Warriors ranks the highest, and it outscores other teams by a lot.
